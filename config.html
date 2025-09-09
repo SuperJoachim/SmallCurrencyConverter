@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter Config</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <h2>Configure Currencies</h2>
+        <form id="configForm">
+            <div class="input-group">
+                <label for="numFields">Number of currency fields:</label>
+                <select id="numFields">
+                    <option value="2">2</option>
+                    <option value="3" selected>3</option>
+                    <option value="4">4</option>
+                    <option value="5">5</option>
+                </select>
+            </div>
+            <div class="input-group" id="fieldGroup1">
+                <label for="currency1">Currency for Field 1:</label>
+                <select id="currency1"></select>
+            </div>
+            <div class="input-group" id="fieldGroup2">
+                <label for="currency2">Currency for Field 2:</label>
+                <select id="currency2"></select>
+            </div>
+            <div class="input-group" id="fieldGroup3">
+                <label for="currency3">Currency for Field 3:</label>
+                <select id="currency3"></select>
+            </div>
+            <div class="input-group" id="fieldGroup4" style="display:none;">
+                <label for="currency4">Currency for Field 4:</label>
+                <select id="currency4"></select>
+            </div>
+            <div class="input-group" id="fieldGroup5" style="display:none;">
+                <label for="currency5">Currency for Field 5:</label>
+                <select id="currency5"></select>
+            </div>
+            <button type="submit">Save</button>
+        </form>
+        <div id="saveStatus" style="display:none; color:green; margin-top:10px;">Saved!</div>
+    </div>
+    <script src="config.js"></script>
+</body>
+</html>

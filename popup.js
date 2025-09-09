@@ -24,19 +24,59 @@ const CURRENCIES = {
 
 let exchangeRates = {};
 
-// DOM elements for new UI
-const usdInput = document.getElementById('usd');
-const dkkInput = document.getElementById('dkk');
-const inrInput = document.getElementById('inr');
+const fieldsContainer = document.getElementById('fieldsContainer');
 const loadingDiv = document.getElementById('loading');
 const errorDiv = document.getElementById('error');
 
+// Read config from localStorage
+function getCurrencyConfig() {
+    const config = JSON.parse(localStorage.getItem('currencyConfig') || '{}');
+    const numFields = config.numFields || 3;
+    const fields = [];
+    for (let i = 0; i < numFields; i++) {
+        fields.push(config[`field${i+1}`] || (i === 0 ? 'usd' : i === 1 ? 'dkk' : i === 2 ? 'inr' : 'eur'));
+    }
+    return fields;
+}
+
 // Initialize the popup
+let fieldInputs = [];
+
+function renderFields() {
+    const fieldCurrencies = getCurrencyConfig();
+    fieldsContainer.innerHTML = '';
+    fieldInputs = [];
+    fieldCurrencies.forEach((currency, idx) => {
+        const group = document.createElement('div');
+        group.className = 'input-group';
+        const label = document.createElement('label');
+        label.textContent = `${currency.toUpperCase()} Currency:`;
+        label.setAttribute('for', `field${idx}`);
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.id = `field${idx}`;
+        input.placeholder = `Enter ${currency.toUpperCase()}`;
+        input.min = '0';
+        input.step = '0.01';
+        input.addEventListener('input', () => handleInput(idx));
+        group.appendChild(label);
+        group.appendChild(input);
+        fieldsContainer.appendChild(group);
+        fieldInputs.push(input);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function() {
+    renderFields();
     loadExchangeRates();
-    usdInput.addEventListener('input', () => handleInput('usd'));
-    dkkInput.addEventListener('input', () => handleInput('dkk'));
-    inrInput.addEventListener('input', () => handleInput('inr'));
+});
+
+// Listen for config changes in other tabs/windows
+window.addEventListener('storage', function(e) {
+    if (e.key === 'currencyConfig') {
+        renderFields();
+        handleInput(0); // Recalculate with new config
+    }
 });
 
 // No need to populate selects for new UI
@@ -89,32 +129,28 @@ async function loadExchangeRates() {
             'cad': 1.25,
             'chf': 0.92,
             'cny': 6.45,
-            'inr': 74.5
+            'inr': 74.5,
+            'dkk': 7.0
         };
         convertCurrency();
     }
 }
 
-// Handle input for one of the three fields and update the others
-function handleInput(changedField) {
-    const dkkRate = exchangeRates['dkk'] || 7.0;
-    const inrRate = exchangeRates['inr'] || 74.5;
-
-    let usd = parseFloat(usdInput.value);
-    let dkk = parseFloat(dkkInput.value);
-    let inr = parseFloat(inrInput.value);
-
-    // Prevent recursion by only updating other fields
-    if (changedField === 'usd' && !isNaN(usd)) {
-        dkkInput.value = (usd * dkkRate).toFixed(2);
-        inrInput.value = (usd * inrRate).toFixed(2);
-    } else if (changedField === 'dkk' && !isNaN(dkk)) {
-        usdInput.value = (dkk / dkkRate).toFixed(2);
-        inrInput.value = ((dkk / dkkRate) * inrRate).toFixed(2);
-    } else if (changedField === 'inr' && !isNaN(inr)) {
-        usdInput.value = (inr / inrRate).toFixed(2);
-        dkkInput.value = ((inr / inrRate) * dkkRate).toFixed(2);
-    }
+// Handle input for any field and update the others
+function handleInput(changedIdx) {
+    const fieldCurrencies = getCurrencyConfig();
+    const values = fieldInputs.map(input => parseFloat(input.value));
+    if (isNaN(values[changedIdx])) return;
+    // Convert input value to USD
+    const changedCurrency = fieldCurrencies[changedIdx];
+    const changedRate = exchangeRates[changedCurrency] || 1;
+    let usdValue = changedCurrency === 'usd' ? values[changedIdx] : values[changedIdx] / changedRate;
+    // Update other fields
+    fieldInputs.forEach((input, idx) => {
+        if (idx === changedIdx) return;
+        const rate = exchangeRates[fieldCurrencies[idx]] || 1;
+        input.value = (usdValue * rate).toFixed(2);
+    });
 }
 
 // Show/hide loading indicator
