@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Currency Converter</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="container">
+        <div style="display: flex; align-items: center; justify-content: space-between;">
+            <h2 style="margin: 0;">Currency Converter</h2>
+            <a href="config.html" title="Configure currencies" style="text-decoration: none; font-size: 22px; margin-left: 10px;" target="_blank">⚙️</a>
+        </div>
+        
+    <div id="fieldsContainer"></div>
+        <div id="loading" class="loading" style="display: none;">
+            Converting...
+        </div>
+        <div id="error" class="error" style="display: none;">
+            Error loading exchange rates. Please try again.
+        </div>
+    </div>
+    
+    <script src="popup.js"></script>
+</body>
+</html>

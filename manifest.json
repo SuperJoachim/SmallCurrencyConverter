@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Small Currency Converter",
+  "version": "1.0",
+  "description": "A simple currency converter using live exchange rates",
+  "permissions": [
+    "storage"
+  ],
+  "host_permissions": [
+    "https://cdn.jsdelivr.net/*",
+    "https://api.fawazahmed0.github.io/*"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Currency Converter",
+    "default_icon": {
+      "16": "icon16.png",
+      "32": "icon32.png",
+      "48": "icon48.png",
+      "128": "icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icon16.png",
+    "32": "icon32.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
