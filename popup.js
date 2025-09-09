@@ -24,40 +24,22 @@ const CURRENCIES = {
 
 let exchangeRates = {};
 
-// DOM elements
-const amountInput = document.getElementById('amount');
-const fromCurrencySelect = document.getElementById('fromCurrency');
-const toCurrencySelect = document.getElementById('toCurrency');
-const resultDiv = document.getElementById('result');
-const resultText = document.getElementById('resultText');
+// DOM elements for new UI
+const usdInput = document.getElementById('usd');
+const dkkInput = document.getElementById('dkk');
+const inrInput = document.getElementById('inr');
 const loadingDiv = document.getElementById('loading');
 const errorDiv = document.getElementById('error');
 
 // Initialize the popup
 document.addEventListener('DOMContentLoaded', function() {
-    populateCurrencySelects();
     loadExchangeRates();
-    
-    // Add event listeners
-    amountInput.addEventListener('input', convertCurrency);
-    fromCurrencySelect.addEventListener('change', convertCurrency);
-    toCurrencySelect.addEventListener('change', convertCurrency);
+    usdInput.addEventListener('input', () => handleInput('usd'));
+    dkkInput.addEventListener('input', () => handleInput('dkk'));
+    inrInput.addEventListener('input', () => handleInput('inr'));
 });
 
-// Populate currency select options
-function populateCurrencySelects() {
-    Object.keys(CURRENCIES).forEach(code => {
-        const option1 = new Option(`${code.toUpperCase()} - ${CURRENCIES[code]}`, code);
-        const option2 = new Option(`${code.toUpperCase()} - ${CURRENCIES[code]}`, code);
-        
-        fromCurrencySelect.appendChild(option1);
-        toCurrencySelect.appendChild(option2);
-    });
-    
-    // Set default values
-    fromCurrencySelect.value = 'usd';
-    toCurrencySelect.value = 'eur';
-}
+// No need to populate selects for new UI
 
 // Load exchange rates from the API
 async function loadExchangeRates() {
@@ -80,7 +62,7 @@ async function loadExchangeRates() {
                     break;
                 }
             } catch (e) {
-                continue;
+                console.warn('Fetch failed for', url, e);
             }
         }
         
@@ -113,49 +95,31 @@ async function loadExchangeRates() {
     }
 }
 
-// Convert currency
-function convertCurrency() {
-    const amount = parseFloat(amountInput.value);
-    const fromCurrency = fromCurrencySelect.value;
-    const toCurrency = toCurrencySelect.value;
-    
-    if (!amount || amount <= 0 || !fromCurrency || !toCurrency) {
-        resultText.textContent = 'Enter amount and select currencies';
-        return;
-    }
-    
-    if (fromCurrency === toCurrency) {
-        resultText.textContent = `${amount.toFixed(2)} ${fromCurrency.toUpperCase()}`;
-        return;
-    }
-    
-    try {
-        let convertedAmount = 0;
-        
-        if (fromCurrency === 'usd') {
-            // Converting from USD to another currency
-            convertedAmount = amount * (exchangeRates[toCurrency] || 1);
-        } else if (toCurrency === 'usd') {
-            // Converting to USD from another currency
-            convertedAmount = amount / (exchangeRates[fromCurrency] || 1);
-        } else {
-            // Converting between two non-USD currencies
-            const usdAmount = amount / (exchangeRates[fromCurrency] || 1);
-            convertedAmount = usdAmount * (exchangeRates[toCurrency] || 1);
-        }
-        
-        resultText.textContent = `${convertedAmount.toFixed(2)} ${toCurrency.toUpperCase()}`;
-        
-    } catch (error) {
-        console.error('Error converting currency:', error);
-        resultText.textContent = 'Error in conversion';
+// Handle input for one of the three fields and update the others
+function handleInput(changedField) {
+    const dkkRate = exchangeRates['dkk'] || 7.0;
+    const inrRate = exchangeRates['inr'] || 74.5;
+
+    let usd = parseFloat(usdInput.value);
+    let dkk = parseFloat(dkkInput.value);
+    let inr = parseFloat(inrInput.value);
+
+    // Prevent recursion by only updating other fields
+    if (changedField === 'usd' && !isNaN(usd)) {
+        dkkInput.value = (usd * dkkRate).toFixed(2);
+        inrInput.value = (usd * inrRate).toFixed(2);
+    } else if (changedField === 'dkk' && !isNaN(dkk)) {
+        usdInput.value = (dkk / dkkRate).toFixed(2);
+        inrInput.value = ((dkk / dkkRate) * inrRate).toFixed(2);
+    } else if (changedField === 'inr' && !isNaN(inr)) {
+        usdInput.value = (inr / inrRate).toFixed(2);
+        dkkInput.value = ((inr / inrRate) * dkkRate).toFixed(2);
     }
 }
 
 // Show/hide loading indicator
 function showLoading(show) {
     loadingDiv.style.display = show ? 'block' : 'none';
-    resultDiv.style.display = show ? 'none' : 'block';
 }
 
 // Show/hide error message

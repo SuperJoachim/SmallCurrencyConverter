@@ -11,32 +11,20 @@
         <h2>Currency Converter</h2>
         
         <div class="input-group">
-            <label for="amount">Amount:</label>
-            <input type="number" id="amount" placeholder="Enter amount" min="0" step="0.01">
+            <label for="usd">USD Currency:</label>
+            <input type="number" id="usd" placeholder="Enter USD" min="0" step="0.01">
         </div>
-        
         <div class="input-group">
-            <label for="fromCurrency">From:</label>
-            <select id="fromCurrency">
-                <option value="">Select currency...</option>
-            </select>
+            <label for="dkk">DKK Currency:</label>
+            <input type="number" id="dkk" placeholder="Enter DKK" min="0" step="0.01">
         </div>
-        
         <div class="input-group">
-            <label for="toCurrency">To:</label>
-            <select id="toCurrency">
-                <option value="">Select currency...</option>
-            </select>
+            <label for="inr">INR Currency:</label>
+            <input type="number" id="inr" placeholder="Enter INR" min="0" step="0.01">
         </div>
-        
-        <div id="result" class="result">
-            <span id="resultText">Enter amount and select currencies</span>
-        </div>
-        
         <div id="loading" class="loading" style="display: none;">
             Converting...
         </div>
-        
         <div id="error" class="error" style="display: none;">
             Error loading exchange rates. Please try again.
         </div>
