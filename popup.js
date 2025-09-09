@@ -66,9 +66,40 @@ function renderFields() {
     });
 }
 
+// Helper to format INR in Lakh
+function formatLakh(value) {
+    if (value >= 100000) {
+        return (value / 100000).toFixed(2) + ' Lakh';
+    }
+    return '';
+}
+
+// Show Lakh value below INR field if applicable
+function updateLakhDisplay() {
+    const fieldCurrencies = getCurrencyConfig();
+    const inrIdx = fieldCurrencies.findIndex(c => c === 'inr');
+    let lakhDiv = document.getElementById('lakhValue');
+    if (!lakhDiv) {
+        lakhDiv = document.createElement('div');
+        lakhDiv.id = 'lakhValue';
+        lakhDiv.style = 'color:#007bff; font-size:13px; margin-top:4px;';
+        if (inrIdx !== -1 && fieldInputs[inrIdx]) {
+            fieldInputs[inrIdx].parentNode.appendChild(lakhDiv);
+        }
+    }
+    if (inrIdx !== -1 && fieldInputs[inrIdx]) {
+        const val = parseFloat(fieldInputs[inrIdx].value);
+        lakhDiv.textContent = formatLakh(val);
+        lakhDiv.style.display = lakhDiv.textContent ? '' : 'none';
+    } else {
+        lakhDiv.style.display = 'none';
+    }
+}
+
 document.addEventListener('DOMContentLoaded', function() {
     renderFields();
     loadExchangeRates();
+    updateLakhDisplay();
 });
 
 // Listen for config changes in other tabs/windows
@@ -76,6 +107,7 @@ window.addEventListener('storage', function(e) {
     if (e.key === 'currencyConfig') {
         renderFields();
         handleInput(0); // Recalculate with new config
+        updateLakhDisplay();
     }
 });
 
@@ -151,6 +183,7 @@ function handleInput(changedIdx) {
         const rate = exchangeRates[fieldCurrencies[idx]] || 1;
         input.value = (usdValue * rate).toFixed(2);
     });
+    updateLakhDisplay();
 }
 
 // Show/hide loading indicator
