@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Small Currency Converter",
-  "version": "1.0",
-  "description": "A simple currency converter using live exchange rates",
+  "version": "1.1.0",
+  "description": "A configurable multi-currency converter using live exchange rates",
   "permissions": [
     "storage"
   ],
