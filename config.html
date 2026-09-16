@@ -31,18 +31,19 @@
                 <label for="currency3">Currency for Field 3:</label>
                 <select id="currency3"></select>
             </div>
-            <div class="input-group" id="fieldGroup4" style="display:none;">
+            <div class="input-group" id="fieldGroup4" hidden>
                 <label for="currency4">Currency for Field 4:</label>
                 <select id="currency4"></select>
             </div>
-            <div class="input-group" id="fieldGroup5" style="display:none;">
+            <div class="input-group" id="fieldGroup5" hidden>
                 <label for="currency5">Currency for Field 5:</label>
                 <select id="currency5"></select>
             </div>
             <button type="submit">Save</button>
         </form>
-        <div id="saveStatus" style="display:none; color:green; margin-top:10px;">Saved!</div>
+        <div id="saveStatus" class="save-status" aria-live="polite" hidden>Saved!</div>
     </div>
+    <script src="shared.js"></script>
     <script src="config.js"></script>
 </body>
 </html>
